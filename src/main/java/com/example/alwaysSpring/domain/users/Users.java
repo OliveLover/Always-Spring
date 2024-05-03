@@ -1,16 +1,13 @@
-package com.example.alwaysSpring.model;
+package com.example.alwaysSpring.domain.users;
 
 import jakarta.persistence.*;
 
 @Entity
-public class Post {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column
-    String Writer;
-
-    @Column
-    String postContent;
+    String name;
 }
