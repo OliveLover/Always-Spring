@@ -110,7 +110,7 @@ class PostServiceTest {
     }
 
     @Test
-    void findById() throws Exception {
+    void findById_and_verify() throws Exception {
         //given
         Posts savePosts = postsRepository.save(Posts.builder()
                 .title("title")
