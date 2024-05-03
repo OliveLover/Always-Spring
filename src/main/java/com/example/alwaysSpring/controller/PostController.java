@@ -1,9 +1,6 @@
 package com.example.alwaysSpring.controller;
 
-import com.example.alwaysSpring.dto.posts.PostsCreateRequestDto;
-import com.example.alwaysSpring.dto.posts.PostsCreateResponseDto;
-import com.example.alwaysSpring.dto.posts.PostsUpdateRequestDto;
-import com.example.alwaysSpring.dto.posts.PostsUpdateResponseDto;
+import com.example.alwaysSpring.dto.posts.*;
 import com.example.alwaysSpring.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +21,8 @@ public class PostController {
         return postService.update(id, requestDto);
     }
 
+    @GetMapping("/api/v1/posts/{id}")
+    public ResponseEntity<PostsResponseDto> findById(@PathVariable Long id) {
+        return postService.findById(id);
+    }
 }
