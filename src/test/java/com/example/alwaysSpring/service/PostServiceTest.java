@@ -4,6 +4,8 @@ import com.example.alwaysSpring.domain.posts.Posts;
 import com.example.alwaysSpring.domain.posts.PostsRepository;
 import com.example.alwaysSpring.dto.posts.PostsCreateRequestDto;
 import com.example.alwaysSpring.dto.posts.PostsCreateResponseDto;
+import com.example.alwaysSpring.dto.posts.PostsUpdateRequestDto;
+import com.example.alwaysSpring.dto.posts.PostsUpdateResponseDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -37,7 +41,7 @@ class PostServiceTest {
     }
 
     @Test
-    void create_post_and_verify_saved_data() throws Exception {
+    void createPost_and_verifySavedDdata() throws Exception {
         //given
         String title = "title";
         String content = "content";
@@ -62,8 +66,46 @@ class PostServiceTest {
                 .containsExactly(title, content, author);
 
         List<Posts> all = postsRepository.findAll();
-        assertThat(all.getFirst())
-                .extracting(title, content, author)
+        assertThat(all.get(0))
+                .extracting("title", "content", "author")
                 .containsExactly(title, content, author);
+    }
+
+    @Test
+    void givenValidPostId_whenUpdatePost_thenPostIsUpdatedCorrectly() throws Exception {
+        //given
+        Posts savePosts = postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        Long updateId = savePosts.getId();
+        String expectedTitle = "title2";
+        String expectedContent = "content2";
+
+        PostsUpdateRequestDto requestDto = PostsUpdateRequestDto.builder()
+                .title(expectedTitle)
+                .content(expectedContent)
+                .build();
+
+        String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
+
+        HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
+
+        //when
+        ResponseEntity<PostsUpdateResponseDto> responseEntity = restTemplate
+                .exchange(url, HttpMethod.PUT, requestEntity, PostsUpdateResponseDto.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody())
+                .extracting("id", "title", "content", "author")
+                .containsExactly(updateId, expectedTitle, expectedContent, "author");
+
+        List<Posts> all = postsRepository.findAll();
+        assertThat(all.get(0))
+                .extracting("id", "title", "content", "author")
+                .containsExactly(updateId, expectedTitle, expectedContent, "author");
     }
 }

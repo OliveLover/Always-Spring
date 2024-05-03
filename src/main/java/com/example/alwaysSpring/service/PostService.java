@@ -23,6 +23,7 @@ public class PostService {
         PostsCreateResponseDto responseDto = new PostsCreateResponseDto(requestDto.toEntity());
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
+
     @Transactional
     public ResponseEntity<PostsUpdateResponseDto> update(Long id, PostsUpdateRequestDto requestDto) {
         Posts posts = postsRepository.findById(id).orElseThrow(
