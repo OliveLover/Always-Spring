@@ -108,4 +108,28 @@ class PostServiceTest {
                 .extracting("id", "title", "content", "author")
                 .containsExactly(updateId, expectedTitle, expectedContent, "author");
     }
+
+    @Test
+    void findById() throws Exception {
+        //given
+        Posts savePosts = postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        Long findId = savePosts.getId();
+
+        String url = "http://localhost:" + port + "/api/v1/posts/" + findId;
+
+        //when
+        ResponseEntity<PostsUpdateResponseDto> responseEntity = restTemplate
+                .exchange(url, HttpMethod.GET, null, PostsUpdateResponseDto.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody())
+                .extracting("id", "title", "content", "author")
+                .containsExactly(findId, "title", "content", "author");
+    }
 }
