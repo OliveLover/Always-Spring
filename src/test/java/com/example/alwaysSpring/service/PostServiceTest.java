@@ -2,10 +2,7 @@ package com.example.alwaysSpring.service;
 
 import com.example.alwaysSpring.domain.posts.Posts;
 import com.example.alwaysSpring.domain.posts.PostsRepository;
-import com.example.alwaysSpring.dto.posts.PostsCreateRequestDto;
-import com.example.alwaysSpring.dto.posts.PostsCreateResponseDto;
-import com.example.alwaysSpring.dto.posts.PostsUpdateRequestDto;
-import com.example.alwaysSpring.dto.posts.PostsUpdateResponseDto;
+import com.example.alwaysSpring.dto.posts.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,8 +121,8 @@ class PostServiceTest {
         String url = "http://localhost:" + port + "/api/v1/posts/" + findId;
 
         //when
-        ResponseEntity<PostsUpdateResponseDto> responseEntity = restTemplate
-                .exchange(url, HttpMethod.GET, null, PostsUpdateResponseDto.class);
+        ResponseEntity<PostsResponseDto> responseEntity = restTemplate
+                .exchange(url, HttpMethod.GET, null, PostsResponseDto.class);
 
         //then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
