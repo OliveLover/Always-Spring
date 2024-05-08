@@ -39,7 +39,7 @@ class PostServiceTest {
     }
 
     @Test
-    void createPost_and_verifySavedDdata() throws Exception {
+    void createPost_and_verifySavedData() throws Exception {
         //given
         String title = "title";
         String content = "content";

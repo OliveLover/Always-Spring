@@ -2,7 +2,12 @@ package com.example.alwaysSpring.service;
 
 import com.example.alwaysSpring.domain.patients.Patients;
 import com.example.alwaysSpring.domain.patients.PatientsRepository;
+import com.example.alwaysSpring.domain.posts.Posts;
+import com.example.alwaysSpring.dto.patients.PatientsRegisterRequestDto;
+import com.example.alwaysSpring.dto.patients.PatientsRegisterResponseDto;
 import com.example.alwaysSpring.dto.patients.PatientsResponseDto;
+import com.example.alwaysSpring.dto.posts.PostsCreateRequestDto;
+import com.example.alwaysSpring.dto.posts.PostsCreateResponseDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,5 +82,40 @@ class PatientServiceTest {
         assertThat(patientsList.get(1).getBirthDay()).isEqualTo("1980-07-21");
         assertThat(patientsList.get(1).getPhoneNum()).isEqualTo("111-1111-1111");
         assertThat(patientsList.get(1).getAddress()).isEqualTo("SEOUL");
+    }
+
+    @Test
+    void registerPatients_and_verifySavedData() throws Exception {
+        //given
+        String name = "name";
+        String birthDay = "1960-12-08";
+        String sex = "M";
+        String phoneNum = "000-0000-0000";
+        String address = "SEOUL";
+
+        PatientsRegisterRequestDto requestDto = PatientsRegisterRequestDto.builder()
+                .name(name)
+                .birthDay(birthDay)
+                .sex(sex)
+                .phoneNum(phoneNum)
+                .address(address)
+                .build();
+
+        String url = "http://localhost:" + port + "/api/v1/patients";
+
+        //when
+        ResponseEntity<PatientsRegisterResponseDto> responseEntity = restTemplate
+                .postForEntity(url, requestDto, PatientsRegisterResponseDto.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(responseEntity.getBody())
+                .extracting("name", "birthDay", "sex", "phoneNum", "address")
+                .containsExactly(name, birthDay, sex, phoneNum, address);
+
+        List<Patients> all = patientsRepository.findAll();
+        assertThat(all.get(0))
+                .extracting("name", "birthDay", "sex", "phoneNum", "address")
+                .containsExactly(name, birthDay, sex, phoneNum, address);
     }
 }
