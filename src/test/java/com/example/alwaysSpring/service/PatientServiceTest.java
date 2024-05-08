@@ -42,6 +42,7 @@ class PatientServiceTest {
         patientsRepository.save(Patients.builder()
                 .name("name1")
                 .sex("M")
+                .birthDay("1960-12-08")
                 .phoneNum("000-0000-0000")
                 .address("BUSAN")
                 .build());
@@ -49,6 +50,7 @@ class PatientServiceTest {
         patientsRepository.save(Patients.builder()
                 .name("name2")
                 .sex("F")
+                .birthDay("1980-07-21")
                 .phoneNum("111-1111-1111")
                 .address("SEOUL")
                 .build());
@@ -66,11 +68,13 @@ class PatientServiceTest {
 
         assertThat(patientsList.get(0).getName()).isEqualTo("name1");
         assertThat(patientsList.get(0).getSex()).isEqualTo("M");
+        assertThat(patientsList.get(0).getBirthDay()).isEqualTo("1960-12-08");
         assertThat(patientsList.get(0).getPhoneNum()).isEqualTo("000-0000-0000");
         assertThat(patientsList.get(0).getAddress()).isEqualTo("BUSAN");
 
         assertThat(patientsList.get(1).getName()).isEqualTo("name2");
         assertThat(patientsList.get(1).getSex()).isEqualTo("F");
+        assertThat(patientsList.get(1).getBirthDay()).isEqualTo("1980-07-21");
         assertThat(patientsList.get(1).getPhoneNum()).isEqualTo("111-1111-1111");
         assertThat(patientsList.get(1).getAddress()).isEqualTo("SEOUL");
     }

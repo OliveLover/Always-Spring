@@ -17,6 +17,9 @@ public class Patients extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String birthDay;
+
     @Column
     private String sex;
 
@@ -27,8 +30,9 @@ public class Patients extends BaseTimeEntity {
     private String address;
 
     @Builder
-    public Patients (String name, String sex, String phoneNum, String address) {
+    public Patients(String name, String sex, String birthDay, String phoneNum, String address) {
         this.name = name;
+        this.birthDay = birthDay;
         this.sex = sex;
         this.phoneNum = phoneNum;
         this.address = address;
