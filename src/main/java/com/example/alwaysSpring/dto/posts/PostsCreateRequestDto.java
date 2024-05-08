@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostsCreateRequestDto {
@@ -15,6 +14,7 @@ public class PostsCreateRequestDto {
     private String content;
     private String author;
 
+    @Builder
     public Posts toEntity() {
         return Posts.builder()
                 .title(title)
