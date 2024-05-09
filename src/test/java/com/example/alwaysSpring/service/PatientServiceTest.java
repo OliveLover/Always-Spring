@@ -92,7 +92,7 @@ class PatientServiceTest {
 
         PatientsRegisterRequestDto requestDto = PatientsRegisterRequestDto.builder()
                 .name(name)
-                .birthDay(birthDay)
+                .dateOfBirth(birthDay)
                 .sex(sex)
                 .phoneNum(phoneNum)
                 .address(address)
@@ -107,12 +107,12 @@ class PatientServiceTest {
         //then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(responseEntity.getBody())
-                .extracting("name", "birthDay", "sex", "phoneNum", "address")
+                .extracting("name", "dateOfBirth", "sex", "phoneNum", "address")
                 .containsExactly(name, birthDay, sex, phoneNum, address);
 
         List<Patients> all = patientsRepository.findAll();
         assertThat(all.get(0))
-                .extracting("name", "birthDay", "sex", "phoneNum", "address")
+                .extracting("name", "dateOfBirth", "sex", "phoneNum", "address")
                 .containsExactly(name, birthDay, sex, phoneNum, address);
     }
 }
