@@ -29,6 +29,14 @@ public class Patients extends BaseTimeEntity {
     @Column
     private String address;
 
+    public void update(Patients entity) {
+        this.name = entity.getName();
+        this.dateOfBirth = entity.getDateOfBirth();
+        this.sex = entity.getSex();
+        this.phoneNum = entity.getPhoneNum();
+        this.address = entity.getAddress();
+    }
+
     @Builder
     public Patients(String name, String sex, String dateOfBirth, String phoneNum, String address) {
         this.name = name;
@@ -37,5 +45,4 @@ public class Patients extends BaseTimeEntity {
         this.phoneNum = phoneNum;
         this.address = address;
     }
-
 }
