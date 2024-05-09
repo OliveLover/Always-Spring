@@ -5,10 +5,14 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE PATIENTS SET ACTIVATED = FALSE WHERE id = ?")
+@SQLRestriction("ACTIVATED = false")
 public class Patients extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +32,9 @@ public class Patients extends BaseTimeEntity {
 
     @Column
     private String address;
+
+    @Column
+    private boolean activated = Boolean.TRUE;
 
     public void update(Patients entity) {
         this.name = entity.getName();
