@@ -174,8 +174,6 @@ class PatientServiceTest {
                 .build());
 
         Long softDeleteId = savePatients.getId();
-        System.out.println(">>>>>>>>>>>>>>> : " + softDeleteId);
-        System.out.println(">>>>>>>>>>>>>>> : " + savePatients.isActivated());
 
         String url = "http://localhost:" + port + "/api/v1/patients/" + softDeleteId + "/delete";
 

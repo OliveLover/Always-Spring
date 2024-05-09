@@ -17,7 +17,8 @@ public class PatientService {
     private final PatientsRepository patientsRepository;
 
     public ResponseEntity<PatientsResponseDto> findAll() {
-        List<Patients> patients = patientsRepository.findAll();
+        List<Patients> patients = patientsRepository.findAllByActivatedTrue();
+
         PatientsResponseDto responseDto = new PatientsResponseDto(patients);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
