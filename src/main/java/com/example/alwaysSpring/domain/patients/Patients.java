@@ -20,7 +20,7 @@ public class Patients extends BaseTimeEntity {
     @Column(nullable = false)
     private String dateOfBirth;
 
-    @Column
+    @Column(nullable = false)
     private String sex;
 
     @Column
