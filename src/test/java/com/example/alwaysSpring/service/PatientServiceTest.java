@@ -116,7 +116,7 @@ class PatientServiceTest {
     }
 
     @Test
-    void givenValidPostId_whenUpdatePost_thenPostIsUpdatedCorrectly() throws Exception {
+    void givenValidPatientsId_whenUpdatePost_thenPatientsIsUpdatedCorrectly() throws Exception {
         //given
         Patients savePatients = patientsRepository.save(Patients.builder()
                 .name("name")
