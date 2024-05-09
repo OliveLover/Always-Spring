@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PatientsRegisterResponseDto {
     private String name;
-    private String birthDay;
+    private String dateOfBirth;
     private String sex;
     private String phoneNum;
     private String address;
 
     public PatientsRegisterResponseDto(Patients entity) {
         this.name = entity.getName();
-        this.birthDay = entity.getBirthDay();
+        this.dateOfBirth = entity.getDateOfBirth();
         this.sex = entity.getSex();
         this.phoneNum = entity.getPhoneNum();
         this.address = entity.getAddress();

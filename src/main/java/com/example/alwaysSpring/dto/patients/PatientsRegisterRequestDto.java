@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PatientsRegisterRequestDto {
     private String name;
-    private String birthDay;
+    private String dateOfBirth;
     private String sex;
     private String phoneNum;
     private String address;
@@ -21,7 +21,7 @@ public class PatientsRegisterRequestDto {
     public Patients toEntity() {
         return Patients.builder()
                 .name(name)
-                .birthDay(birthDay)
+                .dateOfBirth(dateOfBirth)
                 .sex(sex)
                 .phoneNum(phoneNum)
                 .address(address)
