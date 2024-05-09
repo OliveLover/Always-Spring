@@ -11,8 +11,8 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE PATIENTS SET ACTIVATED = FALSE WHERE id = ?")
-@SQLRestriction("ACTIVATED = false")
+//@SQLDelete(sql = "UPDATE PATIENTS SET ACTIVATED = FALSE WHERE id = ?")
+//@SQLRestriction("ACTIVATED = false")
 public class Patients extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +42,10 @@ public class Patients extends BaseTimeEntity {
         this.sex = entity.getSex();
         this.phoneNum = entity.getPhoneNum();
         this.address = entity.getAddress();
+    }
+
+    public void sofDelete(Patients entity) {
+        this.activated = Boolean.FALSE;
     }
 
     @Builder

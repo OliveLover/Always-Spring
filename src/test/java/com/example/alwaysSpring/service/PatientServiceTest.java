@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -159,5 +160,34 @@ class PatientServiceTest {
         assertThat(all.get(0))
                 .extracting("name", "dateOfBirth", "sex", "phoneNum", "address")
                 .containsExactly(expectedName, expectedDateOfBirth, expectedSex, expectedPhoneNum, expectedAddress);
+    }
+
+    @Test
+    void softDeletePatients() throws Exception {
+        //given
+        Patients savePatients = patientsRepository.save(Patients.builder()
+                .name("name")
+                .dateOfBirth("1960-12-08")
+                .sex("M")
+                .phoneNum("000-0000-0000")
+                .address("SEOUL")
+                .build());
+
+        Long softDeleteId = savePatients.getId();
+        System.out.println(">>>>>>>>>>>>>>> : " + softDeleteId);
+        System.out.println(">>>>>>>>>>>>>>> : " + savePatients.isActivated());
+
+        String url = "http://localhost:" + port + "/api/v1/patients/" + softDeleteId + "/delete";
+
+        //when
+        ResponseEntity<PatientsDeleteResponseDto> responseEntity = restTemplate
+                .exchange(url, HttpMethod.PUT, null, PatientsDeleteResponseDto.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Optional<Patients> deletedPatients = patientsRepository.findById(softDeleteId);
+        assertThat(deletedPatients).isPresent();
+        assertThat(deletedPatients.get().isActivated()).isFalse();
     }
 }

@@ -28,4 +28,10 @@ public class PatientController {
     public ResponseEntity<PatientsUpdateResponseDto> update(@PathVariable Long id, @RequestBody PatientsUpdateRequestDto requestDto) {
         return patientService.update(id, requestDto);
     }
+
+    @CrossOrigin(originPatterns = "*")
+    @PutMapping("/api/v1/patients/{id}/delete")
+    public ResponseEntity<PatientsDeleteResponseDto> softDelete(@PathVariable Long id) {
+        return patientService.softDelete(id);
+    }
 }

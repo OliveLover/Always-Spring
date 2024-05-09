@@ -38,4 +38,15 @@ public class PatientService {
         PatientsUpdateResponseDto responseDto = new PatientsUpdateResponseDto(patients);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
+    @Transactional
+    public ResponseEntity<PatientsDeleteResponseDto> softDelete(Long id) {
+        Patients patients = patientsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("등록되지 않은 환자입니다.")
+        );
+        patients.sofDelete(patients);
+        PatientsDeleteResponseDto responseDto = new PatientsDeleteResponseDto();
+        responseDto.setMessage("삭제 처리 되었습니다.");
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 }
