@@ -1,0 +1,70 @@
+package com.example.alwaysSpring.config;
+
+import com.example.alwaysSpring.jwt.JwtUtil;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@Slf4j
+@RequiredArgsConstructor
+public class JwtAuthFilter extends OncePerRequestFilter {
+    private final JwtUtil jwtUtil;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String accessToken = jwtUtil.getTokenFromHeader(request, JwtUtil.ACCESS_TOKEN);
+        String refreshToken = jwtUtil.getTokenFromHeader(request, JwtUtil.REFRESH_TOKEN);
+
+        if (accessToken != null) {
+            processAccessToken(accessToken, response);
+        } else if (refreshToken != null) {
+            processRefreshToken(refreshToken, response);
+        } else {
+            handleTokenNotFound(response);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private void processAccessToken(String accessToken, HttpServletResponse response) {
+        if (jwtUtil.validateToken(accessToken)) {
+            setAuthentication(jwtUtil.getUserNameFromToken(accessToken));
+        }
+    }
+
+    private void processRefreshToken(String refreshToken, HttpServletResponse response) {
+        if (jwtUtil.isRefreshToken(refreshToken)) {
+            String username = jwtUtil.getUserNameFromToken(refreshToken);
+            String newAccessToken = jwtUtil.createToken(username, JwtUtil.ACCESS_TOKEN);
+            jwtUtil.setHeaderAccessToken(response, newAccessToken);
+            setAuthentication(username);
+        }
+    }
+
+    private void setAuthentication(String name) {
+        Authentication authentication = createAuthentication(name);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private Authentication createAuthentication(String name) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(name);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    private void handleTokenNotFound(HttpServletResponse response) throws IOException {
+        log.warn("Token not found");
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token not found");
+    }
+}

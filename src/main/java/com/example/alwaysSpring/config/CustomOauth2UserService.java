@@ -2,7 +2,6 @@ package com.example.alwaysSpring.config;
 
 import com.example.alwaysSpring.domain.users.Users;
 import com.example.alwaysSpring.domain.users.UsersRepository;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -19,7 +18,8 @@ import java.util.Collections;
 @Service
 public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UsersRepository usersRepository;
-    private final HttpSession httpSession;
+
+    //    private final HttpSession httpSession;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -35,7 +35,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oauth2User.getAttributes());
 
         Users users = saveOrUpdate(attributes);
-        httpSession.setAttribute("users", new SessionUsers(users));
+//        httpSession.setAttribute("users", new SessionUsers(users));
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(users.getRoleKey())),
                 attributes.getAttributes(),

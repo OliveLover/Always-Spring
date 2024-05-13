@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: alwaysSpring
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:db;MODE=MYSQL;
+    username: sa
+    password:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  profiles:
+    include: oauth
