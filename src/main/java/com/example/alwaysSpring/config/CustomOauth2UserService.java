@@ -24,7 +24,6 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
 
-    //    private final HttpSession httpSession;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -40,7 +39,6 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oauth2User.getAttributes());
 
         Users users = saveOrUpdate(attributes);
-//        httpSession.setAttribute("users", new SessionUsers(users));
         RefreshToken refreshToken = new RefreshToken(jwtUtil.createToken(users.getName(), JwtUtil.REFRESH_TOKEN), users.getName());
         refreshTokenRepository.save(refreshToken);
         return new DefaultOAuth2User(

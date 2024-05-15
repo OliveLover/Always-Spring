@@ -29,6 +29,7 @@ public class WebSecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,7 +63,7 @@ public class WebSecurityConfig {
                 )
                 .httpBasic(withDefaults())
                 .logout(logout -> logout.logoutUrl("/"))
-                .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService)).defaultSuccessUrl("/redirect", true))
+                .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOauth2UserService)).successHandler(oauth2SuccessHandler))
                 .addFilterBefore(new JwtAuthFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
 
