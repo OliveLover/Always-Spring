@@ -20,7 +20,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 public class JwtUtil {
-    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String BEARER_PREFIX = "Bearer_";
     private static final long ACCESS_TIME = 60 * 60 * 10000L;
     private static final long REFRESH_TIME = 7 * 24 * 60 * 60 * 10000L;
     public static final String ACCESS_TOKEN = "Access_Token";
@@ -33,7 +33,7 @@ public class JwtUtil {
         String token = tokenType.equals(ACCESS_TOKEN) ? ACCESS_TOKEN : REFRESH_TOKEN;
         String bearerToken = request.getHeader(token);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.split(" ")[1].trim();
+            return bearerToken.split("_")[1].trim();
         }
         return null;
     }
@@ -57,7 +57,7 @@ public class JwtUtil {
     public boolean isRefreshToken(String refreshToken) {
         if (!validateToken(refreshToken)) return false;
         Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findByUsername(getUsernameFromToken(refreshToken));
-        return findRefreshToken.isPresent() && refreshToken.equals(findRefreshToken.get().getTokenValue().split(" ")[1].trim());
+        return findRefreshToken.isPresent() && refreshToken.equals(findRefreshToken.get().getTokenValue().split("_")[1].trim());
     }
 
     public String createToken(String name, String tokenType) {
@@ -72,7 +72,7 @@ public class JwtUtil {
     }
 
     public String getUsernameFromToken(String token) {
-        String tokenValue = token.split(" ")[1].trim();
+        String tokenValue = token.split("_")[1].trim();
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(tokenValue).getPayload().getSubject();
     }
 
