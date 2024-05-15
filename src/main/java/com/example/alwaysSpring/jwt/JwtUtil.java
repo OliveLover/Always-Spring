@@ -1,7 +1,7 @@
 package com.example.alwaysSpring.jwt;
 
-import com.example.alwaysSpring.domain.users.RefreshToken;
-import com.example.alwaysSpring.domain.users.RefreshTokenRepository;
+import com.example.alwaysSpring.domain.tokens.RefreshToken;
+import com.example.alwaysSpring.domain.tokens.RefreshTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -55,8 +55,8 @@ public class JwtUtil {
     }
 
     public boolean isRefreshToken(String refreshToken) {
-        if(!validateToken(refreshToken)) return false;
-        Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findByUsername(getUserNameFromToken(refreshToken));
+        if (!validateToken(refreshToken)) return false;
+        Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findByUsername(getUsernameFromToken(refreshToken));
         return findRefreshToken.isPresent() && refreshToken.equals(findRefreshToken.get().getTokenValue().split(" ")[1].trim());
     }
 
@@ -71,7 +71,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String getUserNameFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         String tokenValue = token.split(" ")[1].trim();
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(tokenValue).getPayload().getSubject();
     }

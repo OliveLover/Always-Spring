@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,29 +27,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String refreshToken = jwtUtil.getTokenFromHeader(request, JwtUtil.REFRESH_TOKEN);
 
         if (accessToken != null) {
-            processAccessToken(accessToken, response);
-        } else if (refreshToken != null) {
-            processRefreshToken(refreshToken, response);
-        } else {
-            handleTokenNotFound(response);
+            if (jwtUtil.validateToken(accessToken)) {
+                setAuthentication(jwtUtil.getUsernameFromToken(accessToken));
+            } else if (refreshToken != null && jwtUtil.isRefreshToken(refreshToken)) {
+                String username = jwtUtil.getUsernameFromToken(refreshToken);
+//                Users users = usersRepository.findByName(username).get();
+                String newAccessToken = jwtUtil.createToken(username, JwtUtil.ACCESS_TOKEN);
+                jwtUtil.setHeaderAccessToken(response, newAccessToken);
+                setAuthentication(username);
+            } else if (refreshToken == null) {
+                String token = jwtUtil.createToken("ㅋㅋㅋ", JwtUtil.REFRESH_TOKEN);
+//                handleTokenNotFound(response);
+            } else {
+                handleTokenNotFound(response);
+            }
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private void processAccessToken(String accessToken, HttpServletResponse response) {
-        if (jwtUtil.validateToken(accessToken)) {
-            setAuthentication(jwtUtil.getUserNameFromToken(accessToken));
-        }
-    }
-
-    private void processRefreshToken(String refreshToken, HttpServletResponse response) {
-        if (jwtUtil.isRefreshToken(refreshToken)) {
-            String username = jwtUtil.getUserNameFromToken(refreshToken);
-            String newAccessToken = jwtUtil.createToken(username, JwtUtil.ACCESS_TOKEN);
-            jwtUtil.setHeaderAccessToken(response, newAccessToken);
-            setAuthentication(username);
-        }
     }
 
     private void setAuthentication(String name) {
@@ -65,6 +58,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private void handleTokenNotFound(HttpServletResponse response) throws IOException {
         log.warn("Token not found");
-        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token not found");
+//        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token not found");
     }
 }

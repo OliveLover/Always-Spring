@@ -1,4 +1,4 @@
-package com.example.alwaysSpring.domain.users;
+package com.example.alwaysSpring.domain.tokens;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
