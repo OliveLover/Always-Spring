@@ -29,18 +29,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (accessToken != null) {
             if (jwtUtil.validateToken(accessToken)) {
                 setAuthentication(jwtUtil.getUsernameFromToken(accessToken));
-            } else if (refreshToken != null && jwtUtil.isRefreshToken(refreshToken)) {
+            }
+        } else if (refreshToken != null) {
+            if (jwtUtil.isRefreshToken(refreshToken)) {
                 String username = jwtUtil.getUsernameFromToken(refreshToken);
-//                Users users = usersRepository.findByName(username).get();
                 String newAccessToken = jwtUtil.createToken(username, JwtUtil.ACCESS_TOKEN);
                 jwtUtil.setHeaderAccessToken(response, newAccessToken);
                 setAuthentication(username);
-            } else if (refreshToken == null) {
-                String token = jwtUtil.createToken("ㅋㅋㅋ", JwtUtil.REFRESH_TOKEN);
-//                handleTokenNotFound(response);
-            } else {
-                handleTokenNotFound(response);
             }
+        } else {
+            handleTokenNotFound(response);
         }
 
         filterChain.doFilter(request, response);
@@ -58,6 +56,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private void handleTokenNotFound(HttpServletResponse response) throws IOException {
         log.warn("Token not found");
-//        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token not found");
     }
 }

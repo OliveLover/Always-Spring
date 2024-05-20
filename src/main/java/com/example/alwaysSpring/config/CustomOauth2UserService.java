@@ -1,10 +1,7 @@
 package com.example.alwaysSpring.config;
 
-import com.example.alwaysSpring.domain.tokens.RefreshToken;
-import com.example.alwaysSpring.domain.tokens.RefreshTokenRepository;
 import com.example.alwaysSpring.domain.users.Users;
 import com.example.alwaysSpring.domain.users.UsersRepository;
-import com.example.alwaysSpring.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -21,8 +18,6 @@ import java.util.Collections;
 @Service
 public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UsersRepository usersRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtUtil jwtUtil;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -39,8 +34,6 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oauth2User.getAttributes());
 
         Users users = saveOrUpdate(attributes);
-        RefreshToken refreshToken = new RefreshToken(jwtUtil.createToken(users.getName(), JwtUtil.REFRESH_TOKEN), users.getName());
-        refreshTokenRepository.save(refreshToken);
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(users.getRoleKey())),
                 attributes.getAttributes(),

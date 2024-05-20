@@ -9,6 +9,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -60,6 +61,13 @@ public class JwtUtil {
         return findRefreshToken.isPresent() && refreshToken.equals(findRefreshToken.get().getTokenValue().split("_")[1].trim());
     }
 
+    public boolean checkRepository(String name) {
+        if (refreshTokenRepository.findByUsername(name).isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
     public String createToken(String name, String tokenType) {
         Date date = new Date();
         long time = tokenType.equals(ACCESS_TOKEN) ? ACCESS_TIME : REFRESH_TIME;
@@ -69,6 +77,16 @@ public class JwtUtil {
                 .expiration(new Date(date.getTime() + time))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    @Transactional
+    public String updateToken(String name, String tokenType) {
+        RefreshToken findRefreshToken = refreshTokenRepository.findByUsername(name).orElseThrow(
+                () -> new IllegalArgumentException("유효하지 않은 토큰입니다.")
+        );
+        String newRefreshToken = createToken(name, tokenType);
+        findRefreshToken.updateToken(newRefreshToken);
+        return newRefreshToken;
     }
 
     public String getUsernameFromToken(String token) {
