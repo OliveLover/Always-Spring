@@ -28,7 +28,11 @@ public class JwtUtil {
     public static final String REFRESH_TOKEN = "Refresh_Token";
     private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
 
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public JwtUtil(RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     public String getTokenFromHeader(HttpServletRequest request, String tokenType) {
         String token = tokenType.equals(ACCESS_TOKEN) ? ACCESS_TOKEN : REFRESH_TOKEN;
@@ -56,16 +60,10 @@ public class JwtUtil {
     }
 
     public boolean isRefreshToken(String refreshToken) {
+        log.info("isRefreshToken : " + refreshToken);
         if (!validateToken(refreshToken)) return false;
         Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findByUsername(getUsernameFromToken(refreshToken));
         return findRefreshToken.isPresent() && refreshToken.equals(findRefreshToken.get().getTokenValue().split("_")[1].trim());
-    }
-
-    public boolean checkRepository(String name) {
-        if (refreshTokenRepository.findByUsername(name).isPresent()) {
-            return true;
-        }
-        return false;
     }
 
     public String createToken(String name, String tokenType) {
@@ -89,8 +87,7 @@ public class JwtUtil {
         return newRefreshToken;
     }
 
-    public String getUsernameFromToken(String token) {
-        String tokenValue = token.split("_")[1].trim();
+    public String getUsernameFromToken(String tokenValue) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(tokenValue).getPayload().getSubject();
     }
 

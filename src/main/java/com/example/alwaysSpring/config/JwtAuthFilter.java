@@ -29,6 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (accessToken != null) {
             if (jwtUtil.validateToken(accessToken)) {
                 setAuthentication(jwtUtil.getUsernameFromToken(accessToken));
+
             }
         } else if (refreshToken != null) {
             if (jwtUtil.isRefreshToken(refreshToken)) {
